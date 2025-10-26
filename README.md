@@ -231,6 +231,8 @@ Cloud: vLLM/TGI (heavy models), Vector DB
 
 ## 📚 Documentation
 
+**📑 [Complete Documentation Index](docs/INDEX.md)** - All docs organized by topic
+
 **Getting Started:**
 - [Quickstart](docs/Quickstart.md) - Run your first agent
 - [Architecture](docs/wadah_layered_architecture_diagram_docker_reuse.md) - How Wadah fits with Docker/K8s
