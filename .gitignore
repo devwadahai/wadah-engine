@@ -40,3 +40,9 @@ Desktop.ini
 /examples/local/
 /sandbox/
 
+# Internal notes and documentation drafts
+*_SUMMARY.md
+*_notes.md
+*_scratch.md
+docs/archive/
+

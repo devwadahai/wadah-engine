@@ -1,5 +1,5 @@
 use anyhow::Result;
-use wadah_spec::{SecurityPlugin, PluginConfig};
+use wadah_spec::SecurityPlugin;
 use crate::ui;
 use colored::Colorize;
 
@@ -56,12 +56,12 @@ pub async fn list(verbose: bool) -> Result<()> {
     println!("  wadah run agent.yaml --security permissive");
     println!();
     println!("  {}", "# Enable specific plugins in wadah.yaml".dimmed());
-    println!(r#"  plugins:
+    println!("{}", r#"  plugins:
     - id: security.budgets
       enabled: true
       config:
         usd_per_day: 10.0
-"#.dimmed());
+"#.bright_black());
     
     Ok(())
 }

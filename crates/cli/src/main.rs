@@ -171,9 +171,8 @@ async fn main() -> Result<()> {
         Commands::Verify { package } => {
             commands::verify::execute(&package).await?;
         }
-        Commands::Run { package, trace, prompt, interactive, security } => {
-            let security_mode = security.or(Some(cli.security));
-            commands::run::execute(&package, trace.as_deref(), prompt, interactive, security_mode.as_deref()).await?;
+        Commands::Run { package, trace, prompt, interactive, security: _ } => {
+            commands::run::execute(&package, trace.as_deref(), prompt, interactive).await?;
         }
         Commands::Trace { command } => {
             match command {

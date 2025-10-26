@@ -1,7 +1,7 @@
 use crate::reference::Reference;
 use oci_distribution::client::{Client, ClientConfig, ClientProtocol};
 use oci_distribution::secrets::RegistryAuth;
-use oci_distribution::manifest::{OciDescriptor, OciImageManifest};
+use oci_distribution::manifest::{OciDescriptor, OciImageManifest, OciManifest};
 use oci_distribution::Reference as OciReference;
 use std::path::Path;
 use tokio::fs;
@@ -37,7 +37,7 @@ impl OCIClient {
         &mut self,
         reference: &Reference,
         package_path: &Path,
-        auth: RegistryAuth,
+        _auth: RegistryAuth,
     ) -> crate::Result<String> {
         // Read package file
         let package_data = fs::read(package_path)
@@ -58,39 +58,33 @@ impl OCIClient {
             size: package_data.len() as i64,
             urls: None,
             annotations: None,
-            data: None,
-            platform: None,
-            artifact_type: None,
         };
 
-        // Create manifest
-        let manifest = OciImageManifest {
-            schema_version: 2,
-            media_type: Some(crate::OCI_MANIFEST_MEDIA_TYPE.to_string()),
-            config: OciDescriptor {
-                media_type: "application/vnd.wadah.config.v1+json".to_string(),
-                digest: "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a".to_string(), // empty json
-                size: 2,
-                urls: None,
-                annotations: None,
-                data: None,
-                platform: None,
-                artifact_type: None,
-            },
-            layers: vec![layer],
-            subject: None,
+        // Create config descriptor (empty JSON)
+        let config = OciDescriptor {
+            media_type: "application/vnd.wadah.config.v1+json".to_string(),
+            digest: "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a".to_string(),
+            size: 2,
+            urls: None,
             annotations: None,
         };
 
-        // Push layers
-        self.client
-            .push_blob(&oci_ref, &package_data, &auth)
-            .await
-            .map_err(|e| crate::OCIError::PushError(e.to_string()))?;
+        // Create image manifest
+        let image_manifest = OciImageManifest {
+            schema_version: 2,
+            media_type: Some(crate::OCI_MANIFEST_MEDIA_TYPE.to_string()),
+            artifact_type: Some("application/vnd.wadah.package.v1+zstd".to_string()),
+            config,
+            layers: vec![layer],
+            annotations: None,
+        };
 
-        // Push manifest
+        // Convert to OciManifest
+        let manifest = OciManifest::Image(image_manifest);
+
+        // Push manifest (auth is handled internally by the client)
         self.client
-            .push_manifest(&oci_ref, &manifest, &auth)
+            .push_manifest(&oci_ref, &manifest)
             .await
             .map_err(|e| crate::OCIError::PushError(e.to_string()))?;
 
@@ -113,18 +107,28 @@ impl OCIClient {
             .await
             .map_err(|e| crate::OCIError::PullError(e.to_string()))?;
 
-        // Get the first layer (should be the package)
-        let layer = manifest.layers.first()
+        // Extract layers from manifest
+        let layers = match manifest {
+            OciManifest::Image(img) => img.layers,
+            OciManifest::ImageIndex(_) => {
+                return Err(crate::OCIError::PullError(
+                    "Image index not supported yet".to_string()
+                ));
+            }
+        };
+
+        // Get the first layer (the package)
+        let layer = layers.first()
             .ok_or_else(|| crate::OCIError::PullError("No layers in manifest".to_string()))?;
 
-        // Pull layer
-        let layer_data = self.client
-            .pull_blob(&oci_ref, &layer.digest, &auth)
+        // Create output file
+        let mut file = tokio::fs::File::create(output_path)
             .await
             .map_err(|e| crate::OCIError::PullError(e.to_string()))?;
 
-        // Write to file
-        fs::write(output_path, &layer_data)
+        // Pull blob directly to file
+        self.client
+            .pull_blob(&oci_ref, &layer.digest, &mut file)
             .await
             .map_err(|e| crate::OCIError::PullError(e.to_string()))?;
 
@@ -151,9 +155,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_create_client() {
-        let _client = OCIClient::new();
-        // Basic instantiation test
+    fn test_compute_digest() {
+        let client = OCIClient::new();
+        let data = b"hello world";
+        let digest = client.compute_digest(data);
+        assert!(digest.starts_with("sha256:"));
     }
 }
-

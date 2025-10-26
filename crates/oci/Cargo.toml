@@ -6,14 +6,25 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
+wadah-spec = { path = "../spec" }
+
+# OCI distribution
 oci-distribution.workspace = true
+
+# Async runtime
 tokio.workspace = true
+
+# Error handling
 anyhow.workspace = true
 thiserror.workspace = true
+
+# Serialization
 serde.workspace = true
 serde_json.workspace = true
+
+# Hashing
 sha2.workspace = true
+hex.workspace = true
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }
-

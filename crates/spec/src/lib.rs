@@ -4,7 +4,7 @@ pub mod lockfile;
 pub mod validation;
 pub mod plugins;
 
-pub use wadah_spec::{WadahSpec, Metadata, Runtime, ModelConfig, MemoryConfig, ToolConfig, Policy, Budgets, NetworkPolicy, Artifacts};
+pub use wadah_spec::{WadahSpec, Metadata, Runtime, ModelConfig, MemoryConfig, ToolConfig, Policy, Budgets, NetworkPolicy, FilesystemPolicy, Artifacts};
 pub use toolcaps::{ToolCaps, ToolCapRule, ActionLimit};
 pub use lockfile::{Lockfile, ModelLock, ToolLock};
 pub use plugins::{PluginConfig, SecurityPlugin};

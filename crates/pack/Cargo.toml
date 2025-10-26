@@ -8,18 +8,34 @@ license.workspace = true
 [dependencies]
 wadah-spec = { path = "../spec" }
 
-tar.workspace = true
-zstd.workspace = true
-sha2.workspace = true
-blake3.workspace = true
-walkdir.workspace = true
-tempfile.workspace = true
+# Serialization
 serde.workspace = true
 serde_json.workspace = true
+
+# Error handling
 anyhow.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
 
+# Compression and archiving
+tar.workspace = true
+zstd.workspace = true
+flate2.workspace = true
+
+# Hashing
+sha2.workspace = true
+blake3.workspace = true
+hex.workspace = true
+
+# File system
+walkdir.workspace = true
+tempfile.workspace = true
+
+# Time
+chrono.workspace = true
+
+# Pattern matching
+regex.workspace = true
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }
-

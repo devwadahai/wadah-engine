@@ -10,30 +10,41 @@ name = "wadah"
 path = "src/main.rs"
 
 [dependencies]
-# Workspace crates
+# Local crates
 wadah-spec = { path = "../spec" }
 wadah-pack = { path = "../pack" }
 wadah-runtime = { path = "../runtime" }
 wadah-trace = { path = "../trace" }
 wadah-oci = { path = "../oci" }
 
-# Workspace dependencies
+# CLI
 clap.workspace = true
+colored.workspace = true
+indicatif.workspace = true
+dialoguer.workspace = true
+
+# Async
 tokio.workspace = true
+
+# Error handling
 anyhow.workspace = true
 thiserror.workspace = true
-tracing.workspace = true
-tracing-subscriber.workspace = true
+
+# Serialization
 serde.workspace = true
 serde_json.workspace = true
 serde_yaml.workspace = true
-axum.workspace = true
-tower-http.workspace = true
-uuid.workspace = true
-chrono.workspace = true
 
-# CLI-specific
-colored = "2.1"
-indicatif = "0.17"
-dialoguer = "0.11"
+# Tracing
+tracing.workspace = true
+tracing-subscriber.workspace = true
 
+# OCI
+oci-distribution.workspace = true
+
+# Filesystem
+tempfile.workspace = true
+walkdir.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

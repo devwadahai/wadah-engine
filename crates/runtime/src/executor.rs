@@ -3,7 +3,6 @@ use crate::policy::PolicyEnforcer;
 use crate::budget::BudgetTracker;
 use wadah_spec::WadahSpec;
 use wadah_trace::{TraceRecorder, EventType, SpanKind};
-use std::sync::Arc;
 
 pub struct AgentExecutor {
     spec: WadahSpec,
@@ -102,9 +101,6 @@ impl AgentExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use wadah_spec::{Metadata, Runtime, ModelConfig};
-
     // Integration tests would require actual model endpoints
     // These should be tested with mock adapters
 }

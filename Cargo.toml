@@ -14,7 +14,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Wadah Team <team@wadah.ai>"]
 license = "Apache-2.0"
-repository = "https://github.com/zenri/wadah"
+repository = "https://github.com/devwadahai/wadah-engine"
 homepage = "https://wadah.ai"
 
 [workspace.dependencies]
@@ -54,20 +54,29 @@ hex = "0.4"
 # OCI distribution
 oci-distribution = "0.10"
 
-# WASM runtime (optional)
-wasmtime = { version = "16.0", optional = true }
+# WASM runtime
+wasmtime = "16.0"
 
-# Docker integration (optional)
-bollard = { version = "0.16", optional = true }
+# Docker integration
+bollard = "0.16"
 
 # UUID and time
 uuid = { version = "1.6", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 
-# File system
+# Filesystem & compression
+tempfile = "3.10"
 walkdir = "2.4"
-tempfile = "3.8"
 regex = "1.10"
+flate2 = "1.0"
+
+# CLI UI
+colored = "2.1"
+indicatif = "0.17"
+dialoguer = "0.11"
+
+# Async traits
+async-trait = "0.1"
 
 # Async channels
 async-channel = "2.1"

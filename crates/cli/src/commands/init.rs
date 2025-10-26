@@ -125,7 +125,7 @@ metadata:
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o-mini
+    model_id: gpt-4o-mini
 
 # No security policies - permissive mode
 # Perfect for quick experiments and development
@@ -145,7 +145,7 @@ metadata:
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o-mini
+    model_id: gpt-4o-mini
     params:
       temperature: 0.2
 
@@ -173,7 +173,7 @@ metadata:
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o-mini
+    model_id: gpt-4o-mini
     params:
       temperature: 0.2
       max_tokens: 2048

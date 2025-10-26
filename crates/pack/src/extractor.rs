@@ -111,8 +111,6 @@ impl PackageExtractor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     // Note: extraction tests would need a valid .wpkg file
     // These are integration tests that should be run with sample packages
 }

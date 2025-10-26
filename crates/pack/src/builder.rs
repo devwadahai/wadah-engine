@@ -1,7 +1,7 @@
 use crate::{PackageManifest, manifest::ArtifactEntry};
 use crate::integrity::{compute_digest, compute_digest_bytes, DigestAlgorithm};
 use std::fs::File;
-use std::io::{Write, BufReader};
+use std::io::{BufReader};
 use std::path::{Path, PathBuf};
 use tar::{Builder as TarBuilder, Header};
 use wadah_spec::WadahSpec;
@@ -107,9 +107,11 @@ impl PackageBuilder {
         let artifacts_dir = staging_path.join("artifacts");
         std::fs::create_dir_all(&artifacts_dir)?;
 
+        // Clone the patterns to avoid borrow conflicts
         if let Some(ref artifacts) = self.spec.artifacts {
-            for pattern in &artifacts.include {
-                self.copy_matching_files(pattern, &artifacts_dir)?;
+            let patterns: Vec<String> = artifacts.include.iter().cloned().collect();
+            for pattern in patterns {
+                self.copy_matching_files(&pattern, &artifacts_dir)?;
             }
         }
 
@@ -118,7 +120,6 @@ impl PackageBuilder {
 
     fn copy_matching_files(&mut self, pattern: &str, dest_dir: &Path) -> crate::Result<()> {
         // Simple glob-like pattern matching
-        let pattern_parts: Vec<&str> = pattern.split('/').collect();
         
         for entry in WalkDir::new(&self.base_dir)
             .follow_links(false)
@@ -272,6 +273,7 @@ mod tests {
             policy: None,
             artifacts: None,
             lock: None,
+            plugins: None,
         };
         
         spec.to_file(&spec_path)?;

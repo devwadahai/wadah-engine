@@ -214,7 +214,7 @@ metadata:
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o-mini
+    model_id: gpt-4o-mini
 "#;
 
         let spec = WadahSpec::from_yaml(yaml).unwrap();
@@ -235,7 +235,7 @@ metadata:
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o-mini
+    model_id: gpt-4o-mini
 "#;
         let spec = WadahSpec::from_yaml(yaml).unwrap();
         assert_eq!(spec.security_level(), crate::SecurityLevel::Permissive);
