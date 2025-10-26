@@ -1,0 +1,39 @@
+[package]
+name = "wadah-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "wadah"
+path = "src/main.rs"
+
+[dependencies]
+# Workspace crates
+wadah-spec = { path = "../spec" }
+wadah-pack = { path = "../pack" }
+wadah-runtime = { path = "../runtime" }
+wadah-trace = { path = "../trace" }
+wadah-oci = { path = "../oci" }
+
+# Workspace dependencies
+clap.workspace = true
+tokio.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+axum.workspace = true
+tower-http.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+
+# CLI-specific
+colored = "2.1"
+indicatif = "0.17"
+dialoguer = "0.11"
+

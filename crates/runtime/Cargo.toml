@@ -1,0 +1,31 @@
+[package]
+name = "wadah-runtime"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+wadah-spec = { path = "../spec" }
+wadah-trace = { path = "../trace" }
+
+tokio.workspace = true
+tokio-util.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+async-channel.workspace = true
+
+# Runtime-specific
+async-trait = "0.1"
+futures = "0.3"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+wiremock = "0.6"
+

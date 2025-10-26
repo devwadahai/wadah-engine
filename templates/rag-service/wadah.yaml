@@ -1,0 +1,64 @@
+apiVersion: wadah.ai/v0.1
+kind: Agent
+metadata:
+  name: rag-service
+  version: 0.1.0
+  description: "Retrieval-Augmented Generation service for document Q&A"
+  authors: ["Wadah Team <team@wadah.ai>"]
+  license: Apache-2.0
+  tags:
+    - rag
+    - retrieval
+    - qa
+    - documents
+
+runtime:
+  model:
+    provider: openai
+    modelId: gpt-4o-mini
+    params:
+      temperature: 0.1
+      top_p: 0.95
+      max_tokens: 4096
+      seed: 42
+
+  memory:
+    type: rag
+    index: ./data/index
+    params:
+      embedding_model: "text-embedding-3-small"
+      top_k: 5
+      similarity_threshold: 0.7
+
+  tools:
+    - id: document_search
+      type: builtin
+      config:
+        max_results: 10
+
+  env:
+    OPENAI_API_KEY: "${OPENAI_API_KEY}"
+
+policy:
+  budgets:
+    tokens_per_minute: 100000
+    usd_per_day: 20.0
+    max_duration_secs: 300
+
+  network:
+    allow_domains:
+      - "api.openai.com"
+
+  filesystem:
+    allow_paths:
+      - "./data"
+      - "./workspace"
+    read_only: true
+
+artifacts:
+  include:
+    - "prompts/**"
+    - "data/**"
+  exclude:
+    - "**/*.tmp"
+

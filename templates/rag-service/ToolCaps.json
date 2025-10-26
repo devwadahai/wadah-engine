@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "allow": [
+    {
+      "tool": "document_search",
+      "actions": ["search", "retrieve"],
+      "limits": {
+        "per_min": 60
+      }
+    },
+    {
+      "tool": "http",
+      "actions": ["GET", "POST"],
+      "limits": {
+        "per_min": 100
+      },
+      "domains": ["api.openai.com"]
+    }
+  ],
+  "deny": [
+    {
+      "tool": "filesystem",
+      "actions": ["write", "delete"],
+      "reason": "read-only RAG service"
+    }
+  ]
+}
+

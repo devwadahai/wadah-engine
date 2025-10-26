@@ -1,0 +1,6 @@
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-community>=0.0.20
+qdrant-client>=1.7.0
+openai>=1.0.0
+

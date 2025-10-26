@@ -1,0 +1,79 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/cli",
+    "crates/runtime",
+    "crates/spec",
+    "crates/pack",
+    "crates/trace",
+    "crates/oci",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Wadah Team <team@wadah.ai>"]
+license = "Apache-2.0"
+repository = "https://github.com/zenri/wadah"
+homepage = "https://wadah.ai"
+
+[workspace.dependencies]
+# Core async runtime
+tokio = { version = "1.35", features = ["full"] }
+tokio-util = "0.7"
+
+# CLI and config
+clap = { version = "4.4", features = ["derive", "env"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+
+# HTTP/Web
+axum = "0.7"
+reqwest = { version = "0.11", features = ["json", "stream"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["fs", "trace"] }
+
+# Tracing and observability
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+opentelemetry = "0.21"
+opentelemetry-otlp = "0.14"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Compression and hashing
+tar = "0.4"
+zstd = "0.13"
+sha2 = "0.10"
+blake3 = "1.5"
+hex = "0.4"
+
+# OCI distribution
+oci-distribution = "0.10"
+
+# WASM runtime (optional)
+wasmtime = { version = "16.0", optional = true }
+
+# Docker integration (optional)
+bollard = { version = "0.16", optional = true }
+
+# UUID and time
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# File system
+walkdir = "2.4"
+tempfile = "3.8"
+regex = "1.10"
+
+# Async channels
+async-channel = "2.1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = 3

@@ -1,0 +1,25 @@
+[package]
+name = "wadah-pack"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+wadah-spec = { path = "../spec" }
+
+tar.workspace = true
+zstd.workspace = true
+sha2.workspace = true
+blake3.workspace = true
+walkdir.workspace = true
+tempfile.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+

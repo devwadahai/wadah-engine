@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "allow": [
+    {
+      "tool": "web3",
+      "actions": ["eth_call", "eth_getBalance", "eth_getTransactionReceipt", "eth_getLogs"],
+      "limits": {
+        "per_min": 120
+      }
+    },
+    {
+      "tool": "coingecko",
+      "actions": ["GET"],
+      "limits": {
+        "per_min": 50
+      },
+      "domains": ["api.coingecko.com"]
+    },
+    {
+      "tool": "defillama",
+      "actions": ["GET"],
+      "limits": {
+        "per_min": 60
+      },
+      "domains": ["defillama.com"]
+    },
+    {
+      "tool": "etherscan",
+      "actions": ["GET"],
+      "limits": {
+        "per_min": 100
+      },
+      "domains": ["api.etherscan.io"]
+    },
+    {
+      "tool": "http",
+      "actions": ["GET", "POST"],
+      "limits": {
+        "per_min": 200
+      }
+    }
+  ],
+  "deny": [
+    {
+      "tool": "web3",
+      "actions": ["eth_sendTransaction", "eth_sendRawTransaction", "personal_sign"],
+      "reason": "no transaction signing - read-only monitoring"
+    },
+    {
+      "tool": "wallet",
+      "actions": ["transfer", "approve", "swap"],
+      "reason": "monitoring only, no financial operations"
+    }
+  ]
+}
+

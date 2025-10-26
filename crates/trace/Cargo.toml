@@ -1,0 +1,27 @@
+[package]
+name = "wadah-trace"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+
+# OpenTelemetry (optional)
+opentelemetry = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+
+[features]
+default = []
+otlp = ["opentelemetry", "opentelemetry-otlp"]
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+

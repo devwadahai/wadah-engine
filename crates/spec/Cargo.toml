@@ -1,0 +1,24 @@
+[package]
+name = "wadah-spec"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+
+# Validation
+validator = { version = "0.16", features = ["derive"] }
+regex = "1.10"
+url = { version = "2.5", features = ["serde"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+

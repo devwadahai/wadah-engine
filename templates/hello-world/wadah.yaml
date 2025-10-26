@@ -1,0 +1,16 @@
+apiVersion: wadah.ai/v0.1
+kind: Agent
+metadata:
+  name: hello-world
+  version: 0.1.0
+  description: "The simplest possible Wadah agent"
+  authors: ["Wadah Team <team@wadah.ai>"]
+
+runtime:
+  model:
+    provider: openai
+    modelId: gpt-4o-mini
+
+# No plugins, no policies - just works!
+# This is perfect for learning and quick experiments
+

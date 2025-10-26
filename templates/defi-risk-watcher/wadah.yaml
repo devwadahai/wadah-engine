@@ -1,0 +1,83 @@
+apiVersion: wadah.ai/v0.1
+kind: Agent
+metadata:
+  name: defi-risk-watcher
+  version: 0.1.0
+  description: "DeFi protocol risk monitoring and analysis agent"
+  authors: ["Wadah Team <team@wadah.ai>"]
+  license: Apache-2.0
+  tags:
+    - defi
+    - blockchain
+    - risk
+    - monitoring
+    - web3
+
+runtime:
+  model:
+    provider: openai
+    modelId: gpt-4o
+    params:
+      temperature: 0.1
+      top_p: 0.95
+      max_tokens: 16384
+      seed: 9876
+
+  tools:
+    - id: web3
+      type: http
+      manifest: tools/web3.yaml
+    - id: coingecko
+      type: http
+      manifest: tools/coingecko.yaml
+    - id: defillama
+      type: http
+      manifest: tools/defillama.yaml
+    - id: etherscan
+      type: http
+      manifest: tools/etherscan.yaml
+
+  memory:
+    type: kv
+    params:
+      storage: "./data/risk_history.db"
+
+  env:
+    OPENAI_API_KEY: "${OPENAI_API_KEY}"
+    ETHERSCAN_API_KEY: "${ETHERSCAN_API_KEY}"
+    ALCHEMY_API_KEY: "${ALCHEMY_API_KEY}"
+
+policy:
+  toolcaps: ToolCaps.json
+  
+  budgets:
+    tokens_per_minute: 500000
+    usd_per_day: 150.0
+    max_duration_secs: 3600
+
+  network:
+    allow_domains:
+      - "api.openai.com"
+      - "api.coingecko.com"
+      - "api.etherscan.io"
+      - "defillama.com"
+      - "*.alchemy.com"
+      - "*.infura.io"
+
+  filesystem:
+    allow_paths:
+      - "./data"
+      - "./workspace"
+      - "./reports"
+    read_only: false
+
+artifacts:
+  include:
+    - "prompts/**"
+    - "code/**"
+    - "tools/**"
+    - "data/protocols.json"
+  exclude:
+    - "**/*.log"
+    - "**/node_modules/**"
+

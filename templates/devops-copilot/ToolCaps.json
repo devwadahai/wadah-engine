@@ -1,0 +1,63 @@
+{
+  "version": "0.1",
+  "allow": [
+    {
+      "tool": "kubectl",
+      "actions": ["get", "describe", "logs", "apply", "delete"],
+      "limits": {
+        "per_min": 30
+      }
+    },
+    {
+      "tool": "docker",
+      "actions": ["ps", "images", "build", "push", "pull", "inspect"],
+      "limits": {
+        "per_min": 20
+      }
+    },
+    {
+      "tool": "git",
+      "actions": ["status", "log", "diff", "clone", "pull", "push"],
+      "limits": {
+        "per_min": 10
+      }
+    },
+    {
+      "tool": "http",
+      "actions": ["GET", "POST", "PUT", "DELETE"],
+      "limits": {
+        "per_min": 100
+      },
+      "domains": [
+        "api.openai.com",
+        "github.com",
+        "gitlab.com",
+        "*.kubernetes.io"
+      ]
+    },
+    {
+      "tool": "shell",
+      "actions": ["read_only"],
+      "limits": {
+        "per_min": 50
+      },
+      "fs": {
+        "paths": ["./workspace"],
+        "write": true
+      }
+    }
+  ],
+  "deny": [
+    {
+      "tool": "shell",
+      "actions": ["rm -rf", "dd", "mkfs"],
+      "reason": "destructive operations not allowed"
+    },
+    {
+      "tool": "kubectl",
+      "actions": ["delete namespace", "delete pv"],
+      "reason": "critical resource deletion requires manual approval"
+    }
+  ]
+}
+

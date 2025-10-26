@@ -1,0 +1,60 @@
+apiVersion: wadah.ai/v0.1
+kind: Agent
+metadata:
+  name: langchain-rag
+  version: 0.1.0
+  description: "LangChain agent with TGI and Qdrant for RAG"
+  authors: ["Wadah Team <team@wadah.ai>"]
+  license: Apache-2.0
+  tags:
+    - langchain
+    - rag
+    - tgi
+    - qdrant
+
+runtime:
+  # Python entrypoint
+  entrypoint: python -m app.main:agent
+  
+  # Environment setup
+  env:
+    - name: QDRANT_URL
+      value: http://localhost:6333
+    - name: OPENAI_BASE
+      value: http://localhost:8080/v1
+  
+  # Model configuration (TGI)
+  model:
+    provider: tgi
+    endpoint: http://localhost:8080
+    modelId: mistral-7b-instruct
+    params:
+      temperature: 0.2
+      top_p: 0.95
+      max_tokens: 2048
+      seed: 42
+  
+  # Vector memory (Qdrant)
+  memory:
+    type: vector
+    backend: qdrant
+    settings:
+      url: ${QDRANT_URL}
+      collection: langchain_docs
+      persist: true
+
+# Standard security
+plugins:
+  - id: security.budgets
+    enabled: true
+    config:
+      tokens_per_minute: 100000
+      usd_per_day: 20.0
+
+artifacts:
+  include:
+    - "prompts/**"
+    - "app/**"
+    - "requirements.txt"
+    - "README.md"
+
