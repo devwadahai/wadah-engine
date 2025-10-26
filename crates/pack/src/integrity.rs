@@ -1,6 +1,6 @@
-use sha2::{Sha256, Digest as Sha2Digest};
+use sha2::{Digest as Sha2Digest, Sha256};
 use std::fs::File;
-use std::io::{Read, BufReader};
+use std::io::{BufReader, Read};
 use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
@@ -12,12 +12,12 @@ pub enum DigestAlgorithm {
 pub fn compute_digest(path: &Path, algorithm: DigestAlgorithm) -> crate::Result<String> {
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
-    
+
     match algorithm {
         DigestAlgorithm::Sha256 => {
             let mut hasher = Sha256::new();
             let mut buffer = [0; 8192];
-            
+
             loop {
                 let count = reader.read(&mut buffer)?;
                 if count == 0 {
@@ -25,14 +25,14 @@ pub fn compute_digest(path: &Path, algorithm: DigestAlgorithm) -> crate::Result<
                 }
                 hasher.update(&buffer[..count]);
             }
-            
+
             let result = hasher.finalize();
             Ok(format!("sha256:{}", hex::encode(result)))
         }
         DigestAlgorithm::Blake3 => {
             let mut hasher = blake3::Hasher::new();
             let mut buffer = [0; 8192];
-            
+
             loop {
                 let count = reader.read(&mut buffer)?;
                 if count == 0 {
@@ -40,7 +40,7 @@ pub fn compute_digest(path: &Path, algorithm: DigestAlgorithm) -> crate::Result<
                 }
                 hasher.update(&buffer[..count]);
             }
-            
+
             let result = hasher.finalize();
             Ok(format!("blake3:{}", result.to_hex()))
         }
@@ -66,16 +66,19 @@ pub fn verify_digest(path: &Path, expected: &str) -> crate::Result<bool> {
     let parts: Vec<&str> = expected.split(':').collect();
     if parts.len() != 2 {
         return Err(crate::PackError::IntegrityError(
-            "Invalid digest format".to_string()
+            "Invalid digest format".to_string(),
         ));
     }
 
     let algorithm = match parts[0] {
         "sha256" => DigestAlgorithm::Sha256,
         "blake3" => DigestAlgorithm::Blake3,
-        _ => return Err(crate::PackError::IntegrityError(
-            format!("Unsupported digest algorithm: {}", parts[0])
-        )),
+        _ => {
+            return Err(crate::PackError::IntegrityError(format!(
+                "Unsupported digest algorithm: {}",
+                parts[0]
+            )))
+        }
     };
 
     let actual = compute_digest(path, algorithm)?;
@@ -108,4 +111,3 @@ mod tests {
         assert!(verify_digest(file.path(), &digest).unwrap());
     }
 }
-

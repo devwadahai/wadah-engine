@@ -50,4 +50,3 @@ impl PackageManifest {
         Ok(serde_json::from_str(content)?)
     }
 }
-

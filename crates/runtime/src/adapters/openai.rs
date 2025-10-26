@@ -91,17 +91,17 @@ impl ModelAdapter for OpenAIAdapter {
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(crate::RuntimeError::AdapterError(
-                format!("OpenAI API error: {}", error_text)
-            ));
+            return Err(crate::RuntimeError::AdapterError(format!(
+                "OpenAI API error: {}",
+                error_text
+            )));
         }
 
         let openai_response: OpenAIResponse = response.json().await?;
 
-        let choice = openai_response.choices.first()
-            .ok_or_else(|| crate::RuntimeError::AdapterError(
-                "No choices in OpenAI response".to_string()
-            ))?;
+        let choice = openai_response.choices.first().ok_or_else(|| {
+            crate::RuntimeError::AdapterError("No choices in OpenAI response".to_string())
+        })?;
 
         Ok(ModelResponse {
             text: choice.message.content.clone(),
@@ -119,4 +119,3 @@ impl ModelAdapter for OpenAIAdapter {
         "openai"
     }
 }
-

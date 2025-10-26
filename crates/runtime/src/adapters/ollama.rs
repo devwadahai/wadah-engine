@@ -59,10 +59,10 @@ impl ModelAdapter for OllamaAdapter {
     async fn generate(&self, request: ModelRequest) -> crate::Result<ModelResponse> {
         let url = format!("{}/api/generate", self.endpoint);
 
-        let options = if request.temperature.is_some() 
-            || request.top_p.is_some() 
-            || request.max_tokens.is_some() 
-            || request.seed.is_some() 
+        let options = if request.temperature.is_some()
+            || request.top_p.is_some()
+            || request.max_tokens.is_some()
+            || request.seed.is_some()
         {
             Some(OllamaOptions {
                 temperature: request.temperature,
@@ -82,17 +82,14 @@ impl ModelAdapter for OllamaAdapter {
             stream: false,
         };
 
-        let response = self.client
-            .post(&url)
-            .json(&ollama_request)
-            .send()
-            .await?;
+        let response = self.client.post(&url).json(&ollama_request).send().await?;
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(crate::RuntimeError::AdapterError(
-                format!("Ollama API error: {}", error_text)
-            ));
+            return Err(crate::RuntimeError::AdapterError(format!(
+                "Ollama API error: {}",
+                error_text
+            )));
         }
 
         let ollama_response: OllamaResponse = response.json().await?;
@@ -100,7 +97,11 @@ impl ModelAdapter for OllamaAdapter {
         Ok(ModelResponse {
             text: ollama_response.response,
             tokens_used: ollama_response.eval_count + ollama_response.prompt_eval_count,
-            finish_reason: if ollama_response.done { Some("stop".to_string()) } else { None },
+            finish_reason: if ollama_response.done {
+                Some("stop".to_string())
+            } else {
+                None
+            },
             model: self.model_id.clone(),
         })
     }
@@ -113,4 +114,3 @@ impl ModelAdapter for OllamaAdapter {
         "ollama"
     }
 }
-

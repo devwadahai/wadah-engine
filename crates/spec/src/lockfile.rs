@@ -95,4 +95,3 @@ mod tests {
         assert_eq!(lockfile.tools.len(), 1);
     }
 }
-

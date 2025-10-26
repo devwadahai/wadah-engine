@@ -9,17 +9,17 @@ pub struct WadahSpec {
     pub kind: String,
     pub metadata: Metadata,
     pub runtime: Runtime,
-    
+
     // Security plugins are now optional
     #[serde(skip_serializing_if = "Option::is_none")]
     pub policy: Option<Policy>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub plugins: Option<crate::plugins::PluginConfig>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub artifacts: Option<Artifacts>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<crate::lockfile::Lockfile>,
 }
@@ -154,28 +154,31 @@ impl WadahSpec {
 
     fn validate(&self) -> crate::Result<()> {
         if self.api_version != "wadah.ai/v0.1" {
-            return Err(crate::SpecError::ValidationFailed(
-                format!("Unsupported API version: {}", self.api_version)
-            ));
+            return Err(crate::SpecError::ValidationFailed(format!(
+                "Unsupported API version: {}",
+                self.api_version
+            )));
         }
 
         if self.kind != "Agent" {
-            return Err(crate::SpecError::ValidationFailed(
-                format!("Invalid kind: {}, expected 'Agent'", self.kind)
-            ));
+            return Err(crate::SpecError::ValidationFailed(format!(
+                "Invalid kind: {}, expected 'Agent'",
+                self.kind
+            )));
         }
 
         if self.metadata.name.is_empty() {
             return Err(crate::SpecError::ValidationFailed(
-                "Agent name cannot be empty".to_string()
+                "Agent name cannot be empty".to_string(),
             ));
         }
 
         let valid_providers = ["openai", "tgi", "vllm", "ollama"];
         if !valid_providers.contains(&self.runtime.model.provider.as_str()) {
-            return Err(crate::SpecError::ValidationFailed(
-                format!("Invalid model provider: {}", self.runtime.model.provider)
-            ));
+            return Err(crate::SpecError::ValidationFailed(format!(
+                "Invalid model provider: {}",
+                self.runtime.model.provider
+            )));
         }
 
         Ok(())
@@ -183,7 +186,12 @@ impl WadahSpec {
 
     /// Check if security features are enabled
     pub fn has_security(&self) -> bool {
-        self.policy.is_some() || self.plugins.as_ref().map(|p| !p.plugins.is_empty()).unwrap_or(false)
+        self.policy.is_some()
+            || self
+                .plugins
+                .as_ref()
+                .map(|p| !p.plugins.is_empty())
+                .unwrap_or(false)
     }
 
     /// Get security level based on configuration

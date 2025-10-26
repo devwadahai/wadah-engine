@@ -77,9 +77,10 @@ impl ToolCaps {
 
     fn validate(&self) -> crate::Result<()> {
         if self.version != "0.1" {
-            return Err(crate::SpecError::ValidationFailed(
-                format!("Unsupported ToolCaps version: {}", self.version)
-            ));
+            return Err(crate::SpecError::ValidationFailed(format!(
+                "Unsupported ToolCaps version: {}",
+                self.version
+            )));
         }
         Ok(())
     }
@@ -87,14 +88,18 @@ impl ToolCaps {
     pub fn is_action_allowed(&self, tool: &str, action: &str) -> bool {
         // Check deny rules first
         for deny in &self.deny {
-            if deny.tool == tool && (deny.actions.is_empty() || deny.actions.contains(&action.to_string())) {
+            if deny.tool == tool
+                && (deny.actions.is_empty() || deny.actions.contains(&action.to_string()))
+            {
                 return false;
             }
         }
 
         // Check allow rules
         for allow in &self.allow {
-            if allow.tool == tool && (allow.actions.is_empty() || allow.actions.contains(&action.to_string())) {
+            if allow.tool == tool
+                && (allow.actions.is_empty() || allow.actions.contains(&action.to_string()))
+            {
                 return true;
             }
         }
@@ -140,23 +145,19 @@ mod tests {
     fn test_action_allowed() {
         let caps = ToolCaps {
             version: "0.1".to_string(),
-            allow: vec![
-                ToolCapRule {
-                    tool: "github".to_string(),
-                    actions: vec!["read_issues".to_string()],
-                    limits: None,
-                    fs: None,
-                    domains: None,
-                    extra: HashMap::new(),
-                }
-            ],
-            deny: vec![
-                DenyRule {
-                    tool: "wallet".to_string(),
-                    actions: vec!["transfer".to_string()],
-                    reason: Some("security".to_string()),
-                }
-            ],
+            allow: vec![ToolCapRule {
+                tool: "github".to_string(),
+                actions: vec!["read_issues".to_string()],
+                limits: None,
+                fs: None,
+                domains: None,
+                extra: HashMap::new(),
+            }],
+            deny: vec![DenyRule {
+                tool: "wallet".to_string(),
+                actions: vec!["transfer".to_string()],
+                reason: Some("security".to_string()),
+            }],
         };
 
         assert!(caps.is_action_allowed("github", "read_issues"));
@@ -164,4 +165,3 @@ mod tests {
         assert!(!caps.is_action_allowed("wallet", "transfer"));
     }
 }
-

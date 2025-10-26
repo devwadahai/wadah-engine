@@ -1,7 +1,7 @@
-use crate::{PackageManifest, manifest::ArtifactEntry};
 use crate::integrity::{compute_digest, compute_digest_bytes, DigestAlgorithm};
+use crate::{manifest::ArtifactEntry, PackageManifest};
 use std::fs::File;
-use std::io::{BufReader};
+use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use tar::{Builder as TarBuilder, Header};
 use wadah_spec::WadahSpec;
@@ -17,7 +17,8 @@ pub struct PackageBuilder {
 impl PackageBuilder {
     pub fn new(spec_path: &Path, output_path: &Path) -> crate::Result<Self> {
         let spec = WadahSpec::from_file(spec_path)?;
-        let base_dir = spec_path.parent()
+        let base_dir = spec_path
+            .parent()
             .ok_or_else(|| crate::PackError::BuildError("Invalid spec path".to_string()))?
             .to_path_buf();
 
@@ -120,14 +121,16 @@ impl PackageBuilder {
 
     fn copy_matching_files(&mut self, pattern: &str, dest_dir: &Path) -> crate::Result<()> {
         // Simple glob-like pattern matching
-        
+
         for entry in WalkDir::new(&self.base_dir)
             .follow_links(false)
             .into_iter()
             .filter_map(|e| e.ok())
         {
             if entry.file_type().is_file() {
-                let rel_path = entry.path().strip_prefix(&self.base_dir)
+                let rel_path = entry
+                    .path()
+                    .strip_prefix(&self.base_dir)
                     .map_err(|e| crate::PackError::BuildError(e.to_string()))?;
 
                 if self.matches_pattern(rel_path, pattern) {
@@ -140,7 +143,7 @@ impl PackageBuilder {
                     // Add to manifest
                     let metadata = std::fs::metadata(&dest_path)?;
                     let digest = compute_digest(&dest_path, DigestAlgorithm::Sha256)?;
-                    
+
                     self.manifest.add_artifact(
                         rel_path.to_string_lossy().to_string(),
                         ArtifactEntry {
@@ -158,14 +161,14 @@ impl PackageBuilder {
 
     fn matches_pattern(&self, path: &Path, pattern: &str) -> bool {
         let path_str = path.to_string_lossy();
-        
+
         // Handle ** for recursive matching
         if pattern.contains("**") {
             let parts: Vec<&str> = pattern.split("**").collect();
             if parts.len() == 2 {
                 let prefix = parts[0].trim_end_matches('/');
                 let suffix = parts[1].trim_start_matches('/');
-                
+
                 return (prefix.is_empty() || path_str.starts_with(prefix))
                     && (suffix.is_empty() || path_str.ends_with(suffix));
             }
@@ -174,10 +177,8 @@ impl PackageBuilder {
         // Handle * for single directory component
         if pattern.contains('*') {
             // Simple wildcard matching
-            let regex_pattern = pattern
-                .replace(".", "\\.")
-                .replace("*", ".*");
-            
+            let regex_pattern = pattern.replace(".", "\\.").replace("*", ".*");
+
             if let Ok(re) = regex::Regex::new(&format!("^{}$", regex_pattern)) {
                 return re.is_match(&path_str);
             }
@@ -210,9 +211,11 @@ impl PackageBuilder {
             .filter_map(|e| e.ok())
         {
             if entry.file_type().is_file() {
-                let rel_path = entry.path().strip_prefix(staging_path)
+                let rel_path = entry
+                    .path()
+                    .strip_prefix(staging_path)
                     .map_err(|e| crate::PackError::BuildError(e.to_string()))?;
-                
+
                 let file = File::open(entry.path())?;
                 let metadata = file.metadata()?;
                 let mut header = Header::new_gnu();
@@ -224,12 +227,13 @@ impl PackageBuilder {
             }
         }
 
-        let tar_data = tar_builder.into_inner()
+        let tar_data = tar_builder
+            .into_inner()
             .map_err(|e| crate::PackError::BuildError(e.to_string()))?;
 
         // Compress with zstd
         let compressed = zstd::encode_all(&tar_data[..], 3)?;
-        
+
         // Write to output file
         std::fs::write(&self.output_path, compressed)?;
 
@@ -241,13 +245,13 @@ impl PackageBuilder {
 mod tests {
     use super::*;
     use tempfile::TempDir;
-    use wadah_spec::{Metadata, Runtime, ModelConfig};
+    use wadah_spec::{Metadata, ModelConfig, Runtime};
 
     #[test]
     fn test_package_builder() -> crate::Result<()> {
         let temp_dir = TempDir::new()?;
         let spec_path = temp_dir.path().join("wadah.yaml");
-        
+
         let spec = WadahSpec {
             api_version: "wadah.ai/v0.1".to_string(),
             kind: "Agent".to_string(),
@@ -275,15 +279,14 @@ mod tests {
             lock: None,
             plugins: None,
         };
-        
+
         spec.to_file(&spec_path)?;
-        
+
         let output_path = temp_dir.path().join("test.wpkg");
         let builder = PackageBuilder::new(&spec_path, &output_path)?;
         let result = builder.build()?;
-        
+
         assert!(result.exists());
         Ok(())
     }
 }
-

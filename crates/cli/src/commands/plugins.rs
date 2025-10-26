@@ -1,12 +1,12 @@
-use anyhow::Result;
-use wadah_spec::SecurityPlugin;
 use crate::ui;
+use anyhow::Result;
 use colored::Colorize;
+use wadah_spec::SecurityPlugin;
 
 pub async fn list(verbose: bool) -> Result<()> {
     ui::info("Available Security Plugins");
     println!();
-    
+
     let plugins = vec![
         SecurityPlugin::ToolCaps,
         SecurityPlugin::BudgetLimits,
@@ -14,36 +14,57 @@ pub async fn list(verbose: bool) -> Result<()> {
         SecurityPlugin::FilesystemPolicy,
         SecurityPlugin::Tracing,
     ];
-    
+
     for plugin in plugins {
-        println!("  {} {}", "•".bright_cyan(), plugin.id().bright_white().bold());
+        println!(
+            "  {} {}",
+            "•".bright_cyan(),
+            plugin.id().bright_white().bold()
+        );
         println!("    {}", plugin.description().dimmed());
-        
+
         if verbose {
             print_plugin_details(&plugin);
         }
         println!();
     }
-    
+
     println!();
     ui::info("Security Presets");
     println!();
-    
-    println!("  {} {}", "•".bright_green(), "permissive".bright_white().bold());
+
+    println!(
+        "  {} {}",
+        "•".bright_green(),
+        "permissive".bright_white().bold()
+    );
     println!("    {} No security plugins enabled", "└─".dimmed());
-    println!("    {} Best for: Local development, experimentation", "└─".dimmed());
+    println!(
+        "    {} Best for: Local development, experimentation",
+        "└─".dimmed()
+    );
     println!();
-    
-    println!("  {} {}", "•".bright_yellow(), "standard".bright_white().bold());
+
+    println!(
+        "  {} {}",
+        "•".bright_yellow(),
+        "standard".bright_white().bold()
+    );
     println!("    {} Budget limits only", "└─".dimmed());
-    println!("    {} Best for: Most use cases, reasonable safety", "└─".dimmed());
+    println!(
+        "    {} Best for: Most use cases, reasonable safety",
+        "└─".dimmed()
+    );
     println!();
-    
+
     println!("  {} {}", "•".bright_red(), "strict".bright_white().bold());
     println!("    {} All security plugins enabled", "└─".dimmed());
-    println!("    {} Best for: Production, untrusted agents", "└─".dimmed());
+    println!(
+        "    {} Best for: Production, untrusted agents",
+        "└─".dimmed()
+    );
     println!();
-    
+
     println!();
     ui::info("Usage");
     println!();
@@ -56,13 +77,17 @@ pub async fn list(verbose: bool) -> Result<()> {
     println!("  wadah run agent.yaml --security permissive");
     println!();
     println!("  {}", "# Enable specific plugins in wadah.yaml".dimmed());
-    println!("{}", r#"  plugins:
+    println!(
+        "{}",
+        r#"  plugins:
     - id: security.budgets
       enabled: true
       config:
         usd_per_day: 10.0
-"#.bright_black());
-    
+"#
+        .bright_black()
+    );
+
     Ok(())
 }
 
@@ -91,4 +116,3 @@ fn print_plugin_details(plugin: &SecurityPlugin) {
         }
     }
 }
-

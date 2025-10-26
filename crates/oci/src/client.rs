@@ -1,7 +1,7 @@
 use crate::reference::Reference;
 use oci_distribution::client::{Client, ClientConfig, ClientProtocol};
-use oci_distribution::secrets::RegistryAuth;
 use oci_distribution::manifest::{OciDescriptor, OciImageManifest, OciManifest};
+use oci_distribution::secrets::RegistryAuth;
 use oci_distribution::Reference as OciReference;
 use std::path::Path;
 use tokio::fs;
@@ -63,7 +63,8 @@ impl OCIClient {
         // Create config descriptor (empty JSON)
         let config = OciDescriptor {
             media_type: "application/vnd.wadah.config.v1+json".to_string(),
-            digest: "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a".to_string(),
+            digest: "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                .to_string(),
             size: 2,
             urls: None,
             annotations: None,
@@ -102,7 +103,8 @@ impl OCIClient {
             .map_err(|e| crate::OCIError::InvalidReference(e.to_string()))?;
 
         // Pull manifest
-        let (manifest, _digest) = self.client
+        let (manifest, _digest) = self
+            .client
             .pull_manifest(&oci_ref, &auth)
             .await
             .map_err(|e| crate::OCIError::PullError(e.to_string()))?;
@@ -112,13 +114,14 @@ impl OCIClient {
             OciManifest::Image(img) => img.layers,
             OciManifest::ImageIndex(_) => {
                 return Err(crate::OCIError::PullError(
-                    "Image index not supported yet".to_string()
+                    "Image index not supported yet".to_string(),
                 ));
             }
         };
 
         // Get the first layer (the package)
-        let layer = layers.first()
+        let layer = layers
+            .first()
             .ok_or_else(|| crate::OCIError::PullError("No layers in manifest".to_string()))?;
 
         // Create output file
@@ -136,7 +139,7 @@ impl OCIClient {
     }
 
     fn compute_digest(&self, data: &[u8]) -> String {
-        use sha2::{Sha256, Digest};
+        use sha2::{Digest, Sha256};
         let mut hasher = Sha256::new();
         hasher.update(data);
         let result = hasher.finalize();

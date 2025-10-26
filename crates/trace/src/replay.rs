@@ -11,7 +11,7 @@ impl TraceReplayer {
     pub fn from_jsonl_file(path: &Path) -> crate::Result<Self> {
         let file = std::fs::File::open(path)?;
         let reader = BufReader::new(file);
-        
+
         let mut events = Vec::new();
         for line in reader.lines() {
             let line = line?;
@@ -32,7 +32,7 @@ impl TraceReplayer {
         for span in &trace.spans {
             events.extend(span.events.clone());
         }
-        
+
         // Sort by timestamp
         events.sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
 
@@ -122,4 +122,3 @@ mod tests {
         assert!(replayer.next_event().is_none());
     }
 }
-

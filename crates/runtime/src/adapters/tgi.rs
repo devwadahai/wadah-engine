@@ -43,9 +43,9 @@ struct TGIDetails {
 
 impl TGIAdapter {
     pub fn new(endpoint: Option<String>, model_id: String) -> crate::Result<Self> {
-        let endpoint = endpoint.ok_or_else(|| crate::RuntimeError::AdapterError(
-            "TGI/vLLM adapter requires an endpoint".to_string()
-        ))?;
+        let endpoint = endpoint.ok_or_else(|| {
+            crate::RuntimeError::AdapterError("TGI/vLLM adapter requires an endpoint".to_string())
+        })?;
 
         Ok(Self {
             client: Client::new(),
@@ -71,27 +71,26 @@ impl ModelAdapter for TGIAdapter {
             },
         };
 
-        let response = self.client
-            .post(&url)
-            .json(&tgi_request)
-            .send()
-            .await?;
+        let response = self.client.post(&url).json(&tgi_request).send().await?;
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(crate::RuntimeError::AdapterError(
-                format!("TGI API error: {}", error_text)
-            ));
+            return Err(crate::RuntimeError::AdapterError(format!(
+                "TGI API error: {}",
+                error_text
+            )));
         }
 
         let tgi_response: TGIResponse = response.json().await?;
 
-        let tokens_used = tgi_response.details
+        let tokens_used = tgi_response
+            .details
             .as_ref()
             .map(|d| d.generated_tokens)
             .unwrap_or(0);
 
-        let finish_reason = tgi_response.details
+        let finish_reason = tgi_response
+            .details
             .as_ref()
             .and_then(|d| d.finish_reason.clone());
 
@@ -111,4 +110,3 @@ impl ModelAdapter for TGIAdapter {
         "tgi"
     }
 }
-

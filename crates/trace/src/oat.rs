@@ -1,7 +1,7 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 /// OpenAgentTrace (OAT) Event
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -198,17 +198,9 @@ mod tests {
 
     #[test]
     fn test_create_trace() {
-        let mut trace = OATTrace::new(
-            "test-agent".to_string(),
-            "0.1.0".to_string(),
-            Some(1337),
-        );
+        let mut trace = OATTrace::new("test-agent".to_string(), "0.1.0".to_string(), Some(1337));
 
-        let mut span = OATSpan::new(
-            trace.trace_id.clone(),
-            "main".to_string(),
-            SpanKind::Agent,
-        );
+        let mut span = OATSpan::new(trace.trace_id.clone(), "main".to_string(), SpanKind::Agent);
         span.finish();
 
         trace.add_span(span);
@@ -219,4 +211,3 @@ mod tests {
         assert!(trace.end_time.is_some());
     }
 }
-

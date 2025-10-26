@@ -1,13 +1,16 @@
-pub mod wadah_spec;
-pub mod toolcaps;
 pub mod lockfile;
-pub mod validation;
 pub mod plugins;
+pub mod toolcaps;
+pub mod validation;
+pub mod wadah_spec;
 
-pub use wadah_spec::{WadahSpec, Metadata, Runtime, ModelConfig, MemoryConfig, ToolConfig, Policy, Budgets, NetworkPolicy, FilesystemPolicy, Artifacts};
-pub use toolcaps::{ToolCaps, ToolCapRule, ActionLimit};
 pub use lockfile::{Lockfile, ModelLock, ToolLock};
 pub use plugins::{PluginConfig, SecurityPlugin};
+pub use toolcaps::{ActionLimit, ToolCapRule, ToolCaps};
+pub use wadah_spec::{
+    Artifacts, Budgets, FilesystemPolicy, MemoryConfig, Metadata, ModelConfig, NetworkPolicy,
+    Policy, Runtime, ToolConfig, WadahSpec,
+};
 
 use thiserror::Error;
 
@@ -15,16 +18,16 @@ use thiserror::Error;
 pub enum SpecError {
     #[error("Invalid specification: {0}")]
     InvalidSpec(String),
-    
+
     #[error("Validation failed: {0}")]
     ValidationFailed(String),
-    
+
     #[error("YAML parsing error: {0}")]
     YamlError(#[from] serde_yaml::Error),
-    
+
     #[error("JSON parsing error: {0}")]
     JsonError(#[from] serde_json::Error),
-    
+
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
 }

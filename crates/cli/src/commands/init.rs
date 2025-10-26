@@ -1,33 +1,33 @@
-use anyhow::Result;
-use std::path::Path;
-use std::fs;
 use crate::ui;
+use anyhow::Result;
+use std::fs;
+use std::path::Path;
 
 pub async fn execute(name: &str, output_dir: &str, security_level: &str) -> Result<()> {
     let spinner = ui::create_spinner("Initializing project...");
-    
+
     let output_path = Path::new(output_dir);
-    
+
     // Create directory structure
     fs::create_dir_all(output_path.join("prompts"))?;
-    
+
     // Only create security dirs if not minimal
     if security_level != "minimal" {
         fs::create_dir_all(output_path.join("tools"))?;
         fs::create_dir_all(output_path.join("code"))?;
     }
-    
+
     fs::create_dir_all(output_path.join("build"))?;
-    
+
     // Create wadah.yaml based on security level
     let wadah_yaml = match security_level {
         "minimal" => create_minimal_spec(name),
         "strict" => create_strict_spec(name),
         _ => create_standard_spec(name),
     };
-    
+
     fs::write(output_path.join("wadah.yaml"), wadah_yaml)?;
-    
+
     // Only create ToolCaps for strict mode
     if security_level == "strict" {
         let toolcaps = r#"{
@@ -47,18 +47,18 @@ pub async fn execute(name: &str, output_dir: &str, security_level: &str) -> Resu
 "#;
         fs::write(output_path.join("ToolCaps.json"), toolcaps)?;
     }
-    
+
     // Create example prompt
     let example_prompt = r#"You are a helpful AI assistant.
 
 Be concise, accurate, and helpful in your responses."#;
-    
+
     fs::write(output_path.join("prompts/system.txt"), example_prompt)?;
-    
+
     // Create README
     let readme = create_readme(name, security_level);
     fs::write(output_path.join("README.md"), readme)?;
-    
+
     // Create .gitignore
     let gitignore = r#"# Build artifacts
 build/
@@ -74,16 +74,16 @@ traces/
 # OS
 .DS_Store
 "#;
-    
+
     fs::write(output_path.join(".gitignore"), gitignore)?;
-    
+
     spinner.finish_and_clear();
-    
+
     ui::success(&format!("Initialized agent: {}", name));
     ui::info(&format!("  Security level: {}", security_level));
     ui::info(&format!("  Location: {}/", output_dir));
     println!();
-    
+
     // Show appropriate next steps
     match security_level {
         "minimal" => {
@@ -110,12 +110,13 @@ traces/
             ui::info("Tip: Use --security minimal for quick experiments");
         }
     }
-    
+
     Ok(())
 }
 
 fn create_minimal_spec(name: &str) -> String {
-    format!(r#"apiVersion: wadah.ai/v0.1
+    format!(
+        r#"apiVersion: wadah.ai/v0.1
 kind: Agent
 metadata:
   name: {}
@@ -129,11 +130,14 @@ runtime:
 
 # No security policies - permissive mode
 # Perfect for quick experiments and development
-"#, name)
+"#,
+        name
+    )
 }
 
 fn create_standard_spec(name: &str) -> String {
-    format!(r#"apiVersion: wadah.ai/v0.1
+    format!(
+        r#"apiVersion: wadah.ai/v0.1
 kind: Agent
 metadata:
   name: {}
@@ -156,11 +160,14 @@ plugins:
     config:
       usd_per_day: 100.0
       max_duration_secs: 3600
-"#, name)
+"#,
+        name
+    )
 }
 
 fn create_strict_spec(name: &str) -> String {
-    format!(r#"apiVersion: wadah.ai/v0.1
+    format!(
+        r#"apiVersion: wadah.ai/v0.1
 kind: Agent
 metadata:
   name: {}
@@ -215,7 +222,9 @@ artifacts:
     - "prompts/**"
     - "code/**"
     - "tools/**"
-"#, name)
+"#,
+        name
+    )
 }
 
 fn create_readme(name: &str, security_level: &str) -> String {
@@ -262,8 +271,8 @@ wadah push ghcr.io/username/{}:0.1.0
 ## License
 
 Apache 2.0
-"#, 
-    name, 
+"#,
+    name,
     security_level,
     name,
     name,

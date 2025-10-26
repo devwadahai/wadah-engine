@@ -1,8 +1,8 @@
 use crate::adapters::{ModelAdapter, ModelRequest};
-use crate::policy::PolicyEnforcer;
 use crate::budget::BudgetTracker;
+use crate::policy::PolicyEnforcer;
 use wadah_spec::WadahSpec;
-use wadah_trace::{TraceRecorder, EventType, SpanKind};
+use wadah_trace::{EventType, SpanKind, TraceRecorder};
 
 pub struct AgentExecutor {
     spec: WadahSpec,
@@ -13,14 +13,10 @@ pub struct AgentExecutor {
 }
 
 impl AgentExecutor {
-    pub fn new(
-        spec: WadahSpec,
-        adapter: Box<dyn ModelAdapter>,
-    ) -> crate::Result<Self> {
+    pub fn new(spec: WadahSpec, adapter: Box<dyn ModelAdapter>) -> crate::Result<Self> {
         let policy_enforcer = PolicyEnforcer::new(None); // Will load from spec if needed
-        let budget_tracker = BudgetTracker::new(
-            spec.policy.as_ref().and_then(|p| p.budgets.clone())
-        );
+        let budget_tracker =
+            BudgetTracker::new(spec.policy.as_ref().and_then(|p| p.budgets.clone()));
 
         Ok(Self {
             spec,
@@ -70,7 +66,8 @@ impl AgentExecutor {
         let response = self.adapter.generate(request).await?;
 
         // Check token budget
-        self.budget_tracker.check_tokens(response.tokens_used as u64)?;
+        self.budget_tracker
+            .check_tokens(response.tokens_used as u64)?;
 
         // Record model response
         if let Some(ref mut recorder) = self.recorder {
@@ -104,4 +101,3 @@ mod tests {
     // Integration tests would require actual model endpoints
     // These should be tested with mock adapters
 }
-

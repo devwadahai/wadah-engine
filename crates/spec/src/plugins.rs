@@ -95,17 +95,16 @@ impl PluginConfig {
 
     /// Standard bundle - basic safety
     pub fn standard() -> Self {
-        Self::new()
-            .with_plugin(Plugin {
-                id: SecurityPlugin::BudgetLimits.id().to_string(),
-                enabled: true,
-                config: {
-                    let mut cfg = HashMap::new();
-                    cfg.insert("usd_per_day".to_string(), serde_json::json!(100.0));
-                    cfg.insert("max_duration_secs".to_string(), serde_json::json!(3600));
-                    cfg
-                },
-            })
+        Self::new().with_plugin(Plugin {
+            id: SecurityPlugin::BudgetLimits.id().to_string(),
+            enabled: true,
+            config: {
+                let mut cfg = HashMap::new();
+                cfg.insert("usd_per_day".to_string(), serde_json::json!(100.0));
+                cfg.insert("max_duration_secs".to_string(), serde_json::json!(3600));
+                cfg
+            },
+        })
     }
 
     /// Strict bundle - all security features
@@ -158,4 +157,3 @@ mod tests {
         assert!(config.is_enabled("security.budgets"));
     }
 }
-

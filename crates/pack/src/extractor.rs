@@ -1,4 +1,4 @@
-use crate::{PackageManifest, integrity::verify_digest};
+use crate::{integrity::verify_digest, PackageManifest};
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::{Path, PathBuf};
@@ -46,7 +46,7 @@ impl PackageExtractor {
         let spec_path = self.output_dir.join(crate::SPEC_FILE);
         if !verify_digest(&spec_path, &manifest.spec_digest)? {
             return Err(crate::PackError::IntegrityError(
-                "Spec file integrity check failed".to_string()
+                "Spec file integrity check failed".to_string(),
             ));
         }
 
@@ -55,7 +55,7 @@ impl PackageExtractor {
             let lock_path = self.output_dir.join(crate::LOCKFILE);
             if lock_path.exists() && !verify_digest(&lock_path, lock_digest)? {
                 return Err(crate::PackError::IntegrityError(
-                    "Lockfile integrity check failed".to_string()
+                    "Lockfile integrity check failed".to_string(),
                 ));
             }
         }
@@ -65,7 +65,7 @@ impl PackageExtractor {
             let toolcaps_path = self.output_dir.join(crate::TOOLCAPS_FILE);
             if toolcaps_path.exists() && !verify_digest(&toolcaps_path, toolcaps_digest)? {
                 return Err(crate::PackError::IntegrityError(
-                    "ToolCaps integrity check failed".to_string()
+                    "ToolCaps integrity check failed".to_string(),
                 ));
             }
         }
@@ -74,9 +74,10 @@ impl PackageExtractor {
         for (rel_path, entry) in &manifest.artifacts {
             let full_path = self.output_dir.join("artifacts").join(rel_path);
             if full_path.exists() && !verify_digest(&full_path, &entry.digest)? {
-                return Err(crate::PackError::IntegrityError(
-                    format!("Artifact integrity check failed: {}", rel_path)
-                ));
+                return Err(crate::PackError::IntegrityError(format!(
+                    "Artifact integrity check failed: {}",
+                    rel_path
+                )));
             }
         }
 
@@ -91,11 +92,11 @@ impl PackageExtractor {
 
         // Extract only manifest
         let mut archive = Archive::new(&decompressed[..]);
-        
+
         for entry in archive.entries()? {
             let mut entry = entry?;
             let path = entry.path()?;
-            
+
             if path == Path::new(crate::MANIFEST_FILE) {
                 let mut content = String::new();
                 entry.read_to_string(&mut content)?;
@@ -104,7 +105,7 @@ impl PackageExtractor {
         }
 
         Err(crate::PackError::ExtractionError(
-            "Manifest not found in package".to_string()
+            "Manifest not found in package".to_string(),
         ))
     }
 }
@@ -114,4 +115,3 @@ mod tests {
     // Note: extraction tests would need a valid .wpkg file
     // These are integration tests that should be run with sample packages
 }
-

@@ -1,9 +1,9 @@
-pub mod openai;
 pub mod ollama;
+pub mod openai;
 pub mod tgi;
 
-pub use openai::OpenAIAdapter;
 pub use ollama::OllamaAdapter;
+pub use openai::OpenAIAdapter;
 pub use tgi::TGIAdapter;
 
 use async_trait::async_trait;
@@ -43,9 +43,9 @@ pub fn create_adapter(
         "openai" => Ok(Box::new(OpenAIAdapter::new(endpoint, model_id)?)),
         "ollama" => Ok(Box::new(OllamaAdapter::new(endpoint, model_id)?)),
         "tgi" | "vllm" => Ok(Box::new(TGIAdapter::new(endpoint, model_id)?)),
-        _ => Err(crate::RuntimeError::AdapterError(
-            format!("Unsupported provider: {}", provider)
-        )),
+        _ => Err(crate::RuntimeError::AdapterError(format!(
+            "Unsupported provider: {}",
+            provider
+        ))),
     }
 }
-

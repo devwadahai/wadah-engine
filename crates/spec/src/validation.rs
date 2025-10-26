@@ -1,4 +1,4 @@
-use crate::{WadahSpec, ToolCaps};
+use crate::{ToolCaps, WadahSpec};
 
 pub trait Validator {
     fn validate(&self) -> crate::Result<()>;
@@ -20,7 +20,8 @@ impl Validator for ToolCaps {
 
 pub fn validate_package_name(name: &str) -> bool {
     // Package names must be lowercase alphanumeric with hyphens
-    name.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+    name.chars()
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
         && !name.starts_with('-')
         && !name.ends_with('-')
 }
@@ -52,4 +53,3 @@ mod tests {
         assert!(!validate_version("v1.2.3"));
     }
 }
-

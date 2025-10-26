@@ -10,20 +10,21 @@ pub struct Reference {
 impl Reference {
     pub fn parse(reference: &str) -> crate::Result<Self> {
         // Parse references like: ghcr.io/org/repo:tag or localhost:5000/repo:tag
-        
+
         let parts: Vec<&str> = reference.split('/').collect();
-        
+
         if parts.len() < 2 {
-            return Err(crate::OCIError::InvalidReference(
-                format!("Invalid reference format: {}", reference)
-            ));
+            return Err(crate::OCIError::InvalidReference(format!(
+                "Invalid reference format: {}",
+                reference
+            )));
         }
 
         let registry = parts[0].to_string();
-        
+
         // Join remaining parts except the last one
         let repo_and_tag = parts[1..].join("/");
-        
+
         // Split by ':' to separate repository and tag
         let (repository, tag) = if let Some(pos) = repo_and_tag.rfind(':') {
             let repo = &repo_and_tag[..pos];
@@ -83,4 +84,3 @@ mod tests {
         assert_eq!(reference.to_string(), "ghcr.io/zenri/wadah:0.1.0");
     }
 }
-

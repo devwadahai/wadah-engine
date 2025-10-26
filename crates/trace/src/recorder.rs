@@ -46,15 +46,13 @@ impl TraceRecorder {
     }
 
     pub fn record_event(&mut self, event_type: crate::oat::EventType) -> crate::Result<()> {
-        let span_id = self.current_span.as_ref()
+        let span_id = self
+            .current_span
+            .as_ref()
             .map(|s| s.span_id.clone())
             .unwrap_or_else(|| "root".to_string());
 
-        let event = OATEvent::new(
-            self.trace.trace_id.clone(),
-            span_id,
-            event_type,
-        );
+        let event = OATEvent::new(self.trace.trace_id.clone(), span_id, event_type);
 
         // Write to file if configured
         if let Some(ref mut file) = self.output {
@@ -97,11 +95,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_recorder() {
-        let mut recorder = TraceRecorder::new(
-            "test-agent".to_string(),
-            "0.1.0".to_string(),
-            Some(42),
-        );
+        let mut recorder =
+            TraceRecorder::new("test-agent".to_string(), "0.1.0".to_string(), Some(42));
 
         recorder.start_span("main".to_string(), SpanKind::Agent);
         recorder.record_event(EventType::AgentStart).unwrap();
@@ -113,4 +108,3 @@ mod tests {
         assert_eq!(trace.spans[0].events.len(), 2);
     }
 }
-

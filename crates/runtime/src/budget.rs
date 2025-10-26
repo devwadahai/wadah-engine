@@ -36,7 +36,7 @@ impl BudgetTracker {
         if let Some(ref budgets) = self.budgets {
             if let Some(limit) = budgets.tokens_per_minute {
                 let mut state = self.state.lock().unwrap();
-                
+
                 // Reset counter if a minute has passed
                 if state.minute_start.elapsed() >= Duration::from_secs(60) {
                     state.tokens_this_minute = 0;
@@ -44,10 +44,11 @@ impl BudgetTracker {
                 }
 
                 if state.tokens_this_minute + tokens > limit {
-                    return Err(crate::RuntimeError::BudgetExceeded(
-                        format!("Token budget exceeded: {}/{} tokens/min", 
-                            state.tokens_this_minute + tokens, limit)
-                    ));
+                    return Err(crate::RuntimeError::BudgetExceeded(format!(
+                        "Token budget exceeded: {}/{} tokens/min",
+                        state.tokens_this_minute + tokens,
+                        limit
+                    )));
                 }
 
                 state.tokens_this_minute += tokens;
@@ -60,7 +61,7 @@ impl BudgetTracker {
         if let Some(ref budgets) = self.budgets {
             if let Some(limit) = budgets.usd_per_day {
                 let mut state = self.state.lock().unwrap();
-                
+
                 // Reset counter if a day has passed
                 if state.day_start.elapsed() >= Duration::from_secs(86400) {
                     state.usd_spent_today = 0.0;
@@ -68,10 +69,11 @@ impl BudgetTracker {
                 }
 
                 if state.usd_spent_today + cost > limit {
-                    return Err(crate::RuntimeError::BudgetExceeded(
-                        format!("Cost budget exceeded: ${:.2}/${:.2} per day", 
-                            state.usd_spent_today + cost, limit)
-                    ));
+                    return Err(crate::RuntimeError::BudgetExceeded(format!(
+                        "Cost budget exceeded: ${:.2}/${:.2} per day",
+                        state.usd_spent_today + cost,
+                        limit
+                    )));
                 }
 
                 state.usd_spent_today += cost;
@@ -85,11 +87,12 @@ impl BudgetTracker {
             if let Some(max_duration) = budgets.max_duration_secs {
                 let state = self.state.lock().unwrap();
                 let elapsed = state.start_time.elapsed().as_secs();
-                
+
                 if elapsed > max_duration {
-                    return Err(crate::RuntimeError::BudgetExceeded(
-                        format!("Duration budget exceeded: {}s/{}s", elapsed, max_duration)
-                    ));
+                    return Err(crate::RuntimeError::BudgetExceeded(format!(
+                        "Duration budget exceeded: {}s/{}s",
+                        elapsed, max_duration
+                    )));
                 }
             }
         }
@@ -129,12 +132,11 @@ mod tests {
 
         // Should succeed
         assert!(tracker.check_tokens(500).is_ok());
-        
+
         // Should succeed
         assert!(tracker.check_tokens(400).is_ok());
-        
+
         // Should fail - exceeds limit
         assert!(tracker.check_tokens(200).is_err());
     }
 }
-
