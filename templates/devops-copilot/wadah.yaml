@@ -3,77 +3,69 @@ kind: Agent
 metadata:
   name: devops-copilot
   version: 0.1.0
-  description: "AI-powered DevOps assistant for infrastructure and deployment tasks"
-  authors: ["Wadah Team <team@wadah.ai>"]
+  description: "AI assistant for DevOps tasks - deployments, monitoring, troubleshooting"
+  authors: ["Wadah Team"]
   license: Apache-2.0
-  tags:
-    - devops
-    - infrastructure
-    - automation
-    - kubernetes
+  tags: [devops, kubernetes, ci-cd, monitoring]
 
 runtime:
   model:
     provider: openai
-    modelId: gpt-4o
+    model_id: gpt-4o
     params:
       temperature: 0.2
-      top_p: 0.9
-      max_tokens: 8192
-      seed: 1337
+      max_tokens: 2048
 
   tools:
-    - id: kubectl
-      type: process
-      manifest: tools/kubectl.yaml
-    - id: docker
-      type: process
-      manifest: tools/docker.yaml
-    - id: git
-      type: process
-      manifest: tools/git.yaml
-    - id: http
-      type: http
-      manifest: tools/http.yaml
+    - name: kubectl
+      description: "Kubernetes cluster management"
+      config: tools/kubectl.json
+    - name: github
+      description: "GitHub API for CI/CD"
+      config: tools/github.json
+    - name: docker
+      description: "Container management"
+      config: tools/docker.json
 
   env:
-    OPENAI_API_KEY: "${OPENAI_API_KEY}"
-    KUBECONFIG: "${KUBECONFIG:-~/.kube/config}"
+    KUBECONFIG: /workspace/.kube/config
+    GITHUB_TOKEN: ${GITHUB_TOKEN}
+
+# Standard security for production DevOps
+plugins:
+  - id: security.toolcaps
+    enabled: true
+  - id: security.budgets
+    enabled: true
+    config:
+      tokens_per_minute: 150000
+      usd_per_day: 100.0
+      max_duration_secs: 3600
+  - id: security.network
+    enabled: true
+  - id: observability.tracing
+    enabled: true
 
 policy:
   toolcaps: ToolCaps.json
-  
   budgets:
-    tokens_per_minute: 300000
+    tokens_per_minute: 150000
     usd_per_day: 100.0
-    max_duration_secs: 1800
-
+    max_duration_secs: 3600
   network:
     allow_domains:
-      - "api.openai.com"
-      - "github.com"
-      - "gitlab.com"
-      - "*.kubernetes.io"
+      - "api.github.com"
+      - "*.k8s.io"
       - "docker.io"
       - "ghcr.io"
-
   filesystem:
     allow_paths:
-      - "./workspace"
-      - "~/.kube"
-      - "~/.docker"
-    deny_paths:
-      - "/etc/passwd"
-      - "/etc/shadow"
+      - "/workspace"
+      - "/tmp"
     read_only: false
 
 artifacts:
   include:
     - "prompts/**"
-    - "code/**"
     - "tools/**"
-    - "scripts/**"
-  exclude:
-    - "**/*.log"
-    - "**/node_modules/**"
-
+    - "code/**"

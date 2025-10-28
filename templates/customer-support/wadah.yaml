@@ -1,0 +1,44 @@
+apiVersion: wadah.ai/v0.1
+kind: Agent
+metadata:
+  name: customer-support
+  version: 0.1.0
+  description: "AI-powered customer support agent with knowledge base"
+  authors: ["Wadah Team"]
+  license: Apache-2.0
+  tags: [support, customer-service, helpdesk]
+
+runtime:
+  model:
+    provider: openai
+    model_id: gpt-4o-mini
+    params:
+      temperature: 0.3
+      max_tokens: 1024
+
+  tools:
+    - name: knowledge_base
+      description: "Search company knowledge base"
+    - name: ticket_system
+      description: "Create and update support tickets"
+
+# Minimal security for customer-facing agent
+plugins:
+  - id: security.budgets
+    enabled: true
+    config:
+      usd_per_day: 50.0
+      max_duration_secs: 7200
+  - id: observability.tracing
+    enabled: true
+
+policy:
+  budgets:
+    usd_per_day: 50.0
+    max_duration_secs: 7200
+
+artifacts:
+  include:
+    - "prompts/**"
+    - "memory/**"
+

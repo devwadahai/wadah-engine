@@ -69,27 +69,45 @@ wadah run wadah.yaml --prompt "Summarize the docs"
 
 ---
 
-### 4. **devops-copilot** 🔧
+### 4. **devops-copilot** 🔧 **NEW**
 **Infrastructure automation agent**
 
 - ✅ Kubernetes operations
 - ✅ Docker commands
-- ✅ Git workflows
+- ✅ GitHub CI/CD
 - ✅ Strict ToolCaps (filesystem, network, shell)
 
 ```bash
-wadah init devops-bot --template devops-copilot
-cd devops-bot
-wadah run wadah.yaml --prompt "List all K8s pods"
+cd templates/devops-copilot
+export GITHUB_TOKEN='...'
+export KUBECONFIG='...'
+wadah run wadah.yaml --interactive
 ```
 
-**Use case**: CI/CD automation, infrastructure management, deployment workflows
+**Use case**: CI/CD automation, infrastructure management, K8s operations
 
 **Security**: Strict preset with explicit permissions
 
 ---
 
-### 5. **defi-risk-watcher** 💰
+### 5. **customer-support** 💬 **NEW**
+**AI customer service agent**
+
+- ✅ Empathetic responses
+- ✅ Knowledge base search
+- ✅ Ticket management
+- ✅ Escalation handling
+
+```bash
+cd templates/customer-support
+wadah run wadah.yaml --interactive
+```
+
+**Use case**: Customer service, helpdesk, live chat support
+
+---
+
+### 6. **defi-risk-watcher** 💰
 **DeFi protocol monitoring**
 
 - ✅ On-chain data fetching
