@@ -51,13 +51,24 @@ wadah push ghcr.io/org/agent:v1  # Push to Docker registry
 
 ## 🚀 Quick Start (2 minutes)
 
-### Minimal (No Security)
+### CLI (Command Line)
+
 ```bash
+# Minimal (No Security)
 wadah init hello --security minimal
 cd hello
 export OPENAI_API_KEY="sk-..."
 wadah run wadah.yaml --prompt "Hello!"
 ```
+
+### 🎨 Web UI (Graphical Interface)
+
+**Prefer a visual interface?** Check out **[Wadah UI](https://github.com/devwadahai/wadah-ui)** - a modern web dashboard for managing AI agents without touching the command line.
+
+- **Repository:** https://github.com/devwadahai/wadah-ui
+- **Tech Stack:** React + TypeScript + Tailwind CSS
+- **Features:** Visual agent builder, real-time monitoring, template library, drag-and-drop
+- **Status:** Active development (v0.2.0 coming Q4 2025)
 
 ### With Docker
 ```bash
@@ -240,6 +251,7 @@ Cloud: vLLM/TGI (heavy models), Vector DB
 
 **Specifications:**
 - [WadahSpec v0.1](docs/WadahSpec-v0.1.md) - Agent manifest format
+- [UI Specification](docs/UI-SPEC.md) - Frontend design and architecture
 - [Security Plugins](docs/Plugins.md) - Optional security features
 - [OpenAgentTrace (OAT)](docs/OAT.md) - Tracing specification
 
@@ -247,6 +259,10 @@ Cloud: vLLM/TGI (heavy models), Vector DB
 - [ToolCaps](docs/ToolCaps.md) - Fine-grained permissions
 - [Deployment Patterns](docs/Deployment.md) - Docker/K8s integration
 - [Threat Model](docs/ThreatModel.md) - Security considerations
+
+**Interfaces:**
+- **[Wadah UI](https://github.com/devwadahai/wadah-ui)** - Web dashboard (React/TypeScript)
+- **CLI** - Command-line interface (this repo)
 
 ## ❓ FAQ
 
