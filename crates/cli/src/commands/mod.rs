@@ -4,5 +4,6 @@ pub mod plugins;
 pub mod pull;
 pub mod push;
 pub mod run;
+pub mod serve;
 pub mod trace;
 pub mod verify;

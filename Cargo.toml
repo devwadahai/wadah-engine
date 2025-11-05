@@ -7,6 +7,7 @@ members = [
     "crates/pack",
     "crates/trace",
     "crates/oci",
+    "crates/payment",
 ]
 
 [workspace.package]
@@ -53,6 +54,9 @@ hex = "0.4"
 
 # OCI distribution (use rustls to avoid macOS system-configuration crash)
 oci-distribution = { version = "0.10", default-features = false, features = ["rustls-tls"] }
+
+# Ethereum/Alloy for blockchain integration
+alloy = { version = "0.4", features = ["contract", "providers", "signers", "rpc-types"] }
 
 # WASM runtime
 wasmtime = "16.0"

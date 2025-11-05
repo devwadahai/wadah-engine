@@ -9,7 +9,7 @@ pub use plugins::{PluginConfig, SecurityPlugin};
 pub use toolcaps::{ActionLimit, ToolCapRule, ToolCaps};
 pub use wadah_spec::{
     Artifacts, Budgets, FilesystemPolicy, MemoryConfig, Metadata, ModelConfig, NetworkPolicy,
-    Policy, Runtime, ToolConfig, WadahSpec,
+    PaymentConfig, Policy, PriceConfig, Runtime, ToolConfig, WadahSpec,
 };
 
 use thiserror::Error;

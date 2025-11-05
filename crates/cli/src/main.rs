@@ -118,6 +118,9 @@ enum Commands {
         #[arg(short, long)]
         verbose: bool,
     },
+
+    /// Serve agent with x402 payment requirements
+    Serve(commands::serve::ServeArgs),
 }
 
 #[derive(Subcommand)]
@@ -221,6 +224,9 @@ async fn main() -> Result<()> {
         }
         Commands::Plugins { verbose } => {
             commands::plugins::list(verbose).await?;
+        }
+        Commands::Serve(args) => {
+            commands::serve::execute(args).await?;
         }
     }
 

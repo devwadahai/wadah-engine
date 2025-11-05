@@ -61,11 +61,11 @@ fn get_registry_auth(reference: &Reference) -> Result<RegistryAuth> {
             }
             
             // Fallback to anonymous
-            ui::warning("No credentials found, using anonymous access");
-            Ok(RegistryAuth::Anonymous)
+                ui::warning("No credentials found, using anonymous access");
+                Ok(RegistryAuth::Anonymous)
+            }
         }
     }
-}
 
 fn read_docker_credentials(registry: &str) -> Result<RegistryAuth> {
     use std::fs;

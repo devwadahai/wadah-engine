@@ -22,6 +22,10 @@ pub struct WadahSpec {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<crate::lockfile::Lockfile>,
+    
+    // x402 Payment configuration
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payment: Option<PaymentConfig>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -204,6 +208,44 @@ impl WadahSpec {
             crate::SecurityLevel::Standard
         }
     }
+}
+
+/// x402 Payment Configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PaymentConfig {
+    /// Whether payment is required for this agent
+    pub enabled: bool,
+    
+    /// Payment scheme (exact, upto, etc.)
+    pub scheme: String,
+    
+    /// Supported blockchain networks
+    pub networks: Vec<String>,
+    
+    /// Price configuration
+    pub price: PriceConfig,
+    
+    /// Ethereum address to receive payments
+    #[serde(rename = "payTo")]
+    pub pay_to: String,
+    
+    /// Human-readable description of what the payment is for
+    pub description: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PriceConfig {
+    /// Amount in atomic units (e.g., wei for ETH, smallest unit for tokens)
+    pub amount: String,
+    
+    /// ERC20 token contract address, or "ETH" for native currency
+    pub asset: String,
+    
+    /// Currency symbol for display (e.g., "USDC", "ETH")
+    pub symbol: Option<String>,
+    
+    /// Decimals for the asset (e.g., 6 for USDC, 18 for ETH)
+    pub decimals: Option<u8>,
 }
 
 #[cfg(test)]

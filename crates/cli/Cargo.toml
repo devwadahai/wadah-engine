@@ -16,6 +16,7 @@ wadah-pack = { path = "../pack" }
 wadah-runtime = { path = "../runtime" }
 wadah-trace = { path = "../trace" }
 wadah-oci = { path = "../oci" }
+wadah-payment = { path = "../payment" }
 
 # CLI
 clap.workspace = true

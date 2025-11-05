@@ -1,0 +1,38 @@
+[package]
+name = "wadah-payment"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Core dependencies
+wadah-spec = { path = "../spec" }
+
+# Async runtime
+tokio.workspace = true
+async-trait.workspace = true
+
+# HTTP client
+reqwest = { workspace = true, features = ["json"] }
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Error handling
+anyhow.workspace = true
+thiserror.workspace = true
+
+# Ethereum integration
+alloy = { version = "0.4", features = ["contract", "providers", "signers", "rpc-types"] }
+
+# Crypto
+hex.workspace = true
+sha2.workspace = true
+
+# Base64 encoding
+base64 = "0.21"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }
