@@ -37,7 +37,7 @@ impl OCIClient {
         &mut self,
         reference: &Reference,
         package_path: &Path,
-        _auth: RegistryAuth,
+        auth: RegistryAuth,
     ) -> crate::Result<String> {
         // Read package file
         let package_data = fs::read(package_path)
@@ -51,41 +51,25 @@ impl OCIClient {
         // Compute digest
         let digest = self.compute_digest(&package_data);
 
-        // Create layer descriptor
-        let layer = OciDescriptor {
+        // Create an ImageLayer
+        use oci_distribution::client::ImageLayer;
+        let layer = ImageLayer {
+            data: package_data,
             media_type: crate::WADAH_MEDIA_TYPE.to_string(),
-            digest: digest.clone(),
-            size: package_data.len() as i64,
-            urls: None,
             annotations: None,
         };
 
-        // Create config descriptor (empty JSON)
-        let config = OciDescriptor {
+        // Create empty config
+        use oci_distribution::client::Config;
+        let config = Config {
+            data: b"{}".to_vec(),
             media_type: "application/vnd.wadah.config.v1+json".to_string(),
-            digest: "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-                .to_string(),
-            size: 2,
-            urls: None,
             annotations: None,
         };
 
-        // Create image manifest
-        let image_manifest = OciImageManifest {
-            schema_version: 2,
-            media_type: Some(crate::OCI_MANIFEST_MEDIA_TYPE.to_string()),
-            artifact_type: Some("application/vnd.wadah.package.v1+zstd".to_string()),
-            config,
-            layers: vec![layer],
-            annotations: None,
-        };
-
-        // Convert to OciManifest
-        let manifest = OciManifest::Image(image_manifest);
-
-        // Push manifest (auth is handled internally by the client)
+        // Push using the high-level push method with auth
         self.client
-            .push_manifest(&oci_ref, &manifest)
+            .push(&oci_ref, &[layer], config, &auth, None)
             .await
             .map_err(|e| crate::OCIError::PushError(e.to_string()))?;
 

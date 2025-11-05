@@ -51,8 +51,8 @@ sha2 = "0.10"
 blake3 = "1.5"
 hex = "0.4"
 
-# OCI distribution
-oci-distribution = "0.10"
+# OCI distribution (use rustls to avoid macOS system-configuration crash)
+oci-distribution = { version = "0.10", default-features = false, features = ["rustls-tls"] }
 
 # WASM runtime
 wasmtime = "16.0"
