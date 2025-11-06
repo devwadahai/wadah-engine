@@ -27,6 +27,12 @@ dialoguer.workspace = true
 # Async
 tokio.workspace = true
 
+# HTTP server
+axum.workspace = true
+tower = "0.4"
+tower-http = { version = "0.5", features = ["trace"] }
+hyper = "1.0"
+
 # Error handling
 anyhow.workspace = true
 thiserror.workspace = true
@@ -35,6 +41,9 @@ thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 serde_yaml.workspace = true
+
+# Time
+chrono.workspace = true
 
 # Base64 for Docker credential decoding
 base64 = "0.21"

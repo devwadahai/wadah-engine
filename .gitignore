@@ -17,6 +17,13 @@ Cargo.lock
 .env.*
 !.env.example
 
+# API Keys & Secrets
+keys/
+*.pem
+*.key
+cdp_api_key.json
+*_api_key.json
+
 # IDE
 .vscode/
 .idea/
