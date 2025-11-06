@@ -42,6 +42,7 @@ Desktop.ini
 # Test artifacts
 /tmp/
 /temp/
+/tests/x402/
 
 # Local development
 /examples/local/
